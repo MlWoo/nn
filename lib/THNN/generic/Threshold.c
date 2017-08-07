@@ -21,13 +21,13 @@ void THNN_(Threshold_updateOutput)(
   if (inplace)
   {
     if (inputContig) {
-#ifndef _OPENMP
+#ifdef _OPENMP
       int i = 0;
       real *inp = input->storage->data+input->storageOffset;
-      #pragma omp parallel for if(outIter > TH_OMP_OVERHEAD_THRESHOLD) 
+      #pragma omp parallel for if(inputSize > TH_OMP_OVERHEAD_THRESHOLD) 
       for (i = 0; i < inputSize; ++i) {
+        real* input_data = inp + i;
         if(*input_data <= threshold)
-          real* input_data = inp + i;
           if (*input_data <= threshold)
             *input_data = val;
       }
@@ -49,7 +49,7 @@ void THNN_(Threshold_updateOutput)(
   else
   {
     THTensor_(resizeAs)(output, input);
-#ifndef _OPENMP
+#ifdef _OPENMP
     ptrdiff_t outputSize = THTensor_(nElement)(output);
     int outputContig = THTensor_(isContiguous)(output)? 1:0;
     TH_TENSOR_APPLY2_ADVANCED_INDEX2(outputSize, outputContig, inputContig, real, output, real, input,
