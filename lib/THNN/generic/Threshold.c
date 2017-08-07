@@ -28,7 +28,6 @@ void THNN_(Threshold_updateOutput)(
       for (i = 0; i < inputSize; ++i) {
         real* input_data = inp + i;
         if(*input_data <= threshold)
-          if (*input_data <= threshold)
             *input_data = val;
       }
 #else
